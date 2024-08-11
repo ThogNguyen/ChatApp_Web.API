@@ -1,6 +1,6 @@
-﻿using ChatApp_Web.API.Repositories.Interfaces;
+﻿using ChatApp_Web.API.Models.GroupMembersModels;
+using ChatApp_Web.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatApp_Web.API.Controllers
@@ -19,9 +19,14 @@ namespace ChatApp_Web.API.Controllers
 
         // Thêm thành viên vào nhóm
         [HttpPost("add-people")]
-        public async Task<IActionResult> AddMemberAsync(Guid groupId, string userId)
+        public async Task<IActionResult> AddMemberAsync(GroupMemberForCreate model)
         {
-            var response = await _groupMemberService.AddMemberAsync(groupId, userId);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _groupMemberService.AddMemberAsync(model);
             if (response.IsSuccess)
             {
                 return Ok(response);

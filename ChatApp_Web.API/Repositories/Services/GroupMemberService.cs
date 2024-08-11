@@ -1,6 +1,6 @@
 ﻿using ChatApp_Web.API.Data;
 using ChatApp_Web.API.Models;
-using ChatApp_Web.API.Models.GroupsModels;
+using ChatApp_Web.API.Models.GroupMembersModels;
 using ChatApp_Web.API.Models.Response;
 using ChatApp_Web.API.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -16,12 +16,25 @@ namespace ChatApp_Web.API.Repositories.Services
             db = context;
         }
 
-        public async Task<BaseResponse> AddMemberAsync(Guid groupId, string userId)
+        public async Task<BaseResponse> AddMemberAsync(GroupMemberForCreate model)
         {
-            // check user có trong nhóm ch
+            // Check if the user exists
+            var user = await db.Users
+                .FirstOrDefaultAsync(u => u.UserName == model.Username);
+
+            if (user == null)
+            {
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Errors = "Người dùng không tồn tại."
+                };
+            }
+
+            // Check if the user is already a member of the group
             var existingUser = await db.GroupMembers
-                .AnyAsync(gm => gm.Group_Id == groupId
-                                && gm.User_Id == userId);
+                .AnyAsync(gm => gm.Group_Id == model.Group_Id
+                                && gm.User_Id == user.Id);
 
             if (existingUser)
             {
@@ -34,9 +47,9 @@ namespace ChatApp_Web.API.Repositories.Services
 
             var newMember = new GroupMember
             {
-                Group_Id = groupId,
-                User_Id = userId,
-                JoinedAt = DateTime.Now
+                Group_Id = model.Group_Id,
+                User_Id = user.Id,
+                JoinedAt = model.JoinedAt
             };
 
             db.GroupMembers.Add(newMember);

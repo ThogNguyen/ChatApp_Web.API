@@ -1,9 +1,7 @@
-﻿using Azure.Core;
-using ChatApp_Web.API.Models;
+﻿using ChatApp_Web.API.Models.GroupModels;
 using ChatApp_Web.API.Models.Response;
 using ChatApp_Web.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatApp_Web.API.Controllers
@@ -46,14 +44,14 @@ namespace ChatApp_Web.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(GroupVM model)
+        public async Task<IActionResult> Post(string userId, GroupForCreate model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var result = await _groupService.CreateGroupAsync(model);
+            var result = await _groupService.CreateGroupAsync(userId, model);
 
             if (result.IsSuccess)
             {

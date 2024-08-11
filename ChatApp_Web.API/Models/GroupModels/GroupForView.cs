@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ChatApp_Web.API.Models
+namespace ChatApp_Web.API.Models.GroupModels
 {
-    public class GroupVM
+    public class GroupForView
     {
-        [Required(ErrorMessage = "Tên nhóm không được bỏ trống.")]
         public string? GroupName { get; set; }
         public string? CreatedByUserId { get; set; }
     }

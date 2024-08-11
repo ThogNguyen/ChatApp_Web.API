@@ -1,4 +1,4 @@
-﻿namespace ChatApp_Web.API.Models.GroupsModels
+﻿namespace ChatApp_Web.API.Models.GroupMembersModels
 {
     public class GroupMemberForView
     {

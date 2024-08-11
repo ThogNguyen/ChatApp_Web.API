@@ -1,5 +1,6 @@
 ﻿using ChatApp_Web.API.Data;
 using ChatApp_Web.API.Models;
+using ChatApp_Web.API.Models.GroupModels;
 using ChatApp_Web.API.Models.Response;
 using ChatApp_Web.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -18,9 +19,9 @@ namespace ChatApp_Web.API.Repositories.Services
             _userManager = userManager;
         }
 
-        public async Task<BaseResponse> CreateGroupAsync(GroupVM model)
+        public async Task<BaseResponse> CreateGroupAsync(string userId, GroupForCreate model)
         {
-            var user = await _userManager.FindByIdAsync(model.CreatedByUserId!);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return new BaseResponse ()
@@ -34,7 +35,7 @@ namespace ChatApp_Web.API.Repositories.Services
             {
                 GroupId = Guid.NewGuid(),
                 GroupName = model.GroupName,
-                CreatedByUserId = model.CreatedByUserId,
+                CreatedByUserId = userId
             };
 
             await db.Groups.AddAsync(group);
@@ -44,7 +45,7 @@ namespace ChatApp_Web.API.Repositories.Services
             var groupMember = new GroupMember
             {
                 Group_Id = group.GroupId,
-                User_Id = model.CreatedByUserId,
+                User_Id = userId,
                 JoinedAt = DateTime.Now
             };
 
@@ -58,26 +59,25 @@ namespace ChatApp_Web.API.Repositories.Services
             };
         }
 
-        public async Task<GroupVM> GetGroupByIdAsync(Guid id)
+        public async Task<GroupForView> GetGroupByIdAsync(Guid id)
         {
             var group = await db.Groups.FindAsync(id);
             if (group != null)
             {
-                return new GroupVM
+                return new GroupForView
                 {
-                    GroupName = group.GroupName,
-                    CreatedByUserId = group.CreatedByUserId
+                    GroupName = group.GroupName
                 };
             }
 
             return null;
         }
 
-        public async Task<IEnumerable<GroupVM>> GetGroupsAsync()
+        public async Task<IEnumerable<GroupForView>> GetGroupsAsync()
         {
             var groups = await db.Groups.ToListAsync();
 
-            return groups.Select(group => new GroupVM
+            return groups.Select(group => new GroupForView
             {
                 GroupName = group.GroupName,
                 CreatedByUserId = group.CreatedByUserId
