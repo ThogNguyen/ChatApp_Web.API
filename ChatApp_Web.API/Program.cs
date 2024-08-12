@@ -68,11 +68,11 @@ namespace ChatApp_Web.API
                 };
             });
 
-            builder.Services.AddAuthorization(options =>
-            {
-                options.AddPolicy("OnlyAdmin",
-                    policy => policy.RequireRole("Admin"));
-            });
+            //builder.Services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("OnlyAdmin",
+            //        policy => policy.RequireRole("Admin"));
+            //});
 
             builder.Services.AddSingleton<JWTHandle>();
 

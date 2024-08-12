@@ -1,8 +1,6 @@
-﻿using ChatApp_Web.API.Models;
-using ChatApp_Web.API.Models.Response;
+﻿using ChatApp_Web.API.Models.MesssageModels;
 using ChatApp_Web.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatApp_Web.API.Controllers
@@ -19,15 +17,15 @@ namespace ChatApp_Web.API.Controllers
             _messageService = messageService;
         }
 
-        [HttpGet("{groupId}")]
+        [HttpGet("get-messages/{groupId}")]
         public async Task<IActionResult> GetMessages(Guid groupId)
         {
             var messages = await _messageService.GetMessagesAsync(groupId);
             return Ok(messages);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> SendMessage([FromBody] MessageVM message)
+        [HttpPost("send-message")]
+        public async Task<IActionResult> SendMessage([FromBody] MessageForCreate message)
         {
             if (!ModelState.IsValid)
             {

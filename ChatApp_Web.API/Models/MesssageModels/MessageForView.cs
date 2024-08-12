@@ -1,10 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace ChatApp_Web.API.Models
+﻿namespace ChatApp_Web.API.Models.MesssageModels
 {
-    public class MessageVM
+    public class MessageForView
     {
-        [Required(ErrorMessage = "Tin nhắn không được trống.")]
+        public Guid MessageId { get; set; }
+        public string? Username { get; set; }
         public string? MessageContent { get; set; }
         public string? User_Id { get; set; }
         public Guid Group_Id { get; set; }

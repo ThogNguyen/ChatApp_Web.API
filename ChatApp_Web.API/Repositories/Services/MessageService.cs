@@ -1,5 +1,6 @@
 ﻿using ChatApp_Web.API.Data;
 using ChatApp_Web.API.Models;
+using ChatApp_Web.API.Models.MesssageModels;
 using ChatApp_Web.API.Models.Response;
 using ChatApp_Web.API.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -14,13 +15,16 @@ namespace ChatApp_Web.API.Repositories.Services
         {
             db = dbContext;
         }
-        public async Task<List<MessageVM>> GetMessagesAsync(Guid groupId)
+        public async Task<IEnumerable<MessageForView>> GetMessagesAsync(Guid groupId)
         {
             return await db.Messages
                 .Where(m => m.Group_Id == groupId)
-                .Select(m => new MessageVM
+                .OrderByDescending(m => m.SentAt)
+                .Select(m => new MessageForView
                 {
+                    MessageId = m.MessageId,
                     MessageContent = m.MessageContent,
+                    Username = m.User!.UserName,
                     User_Id = m.User_Id,
                     Group_Id = m.Group_Id,
                     SentAt = m.SentAt
@@ -28,14 +32,14 @@ namespace ChatApp_Web.API.Repositories.Services
                 .ToListAsync();
         }
 
-        public async Task<BaseResponse> SendMessageAsync(MessageVM message)
+        public async Task<BaseResponse> SendMessageAsync(MessageForCreate message)
         {
             var newMessage = new Message
             {
                 MessageContent = message.MessageContent,
                 User_Id = message.User_Id,
                 Group_Id = message.Group_Id,
-                SentAt = DateTime.Now
+                SentAt = DateTime.UtcNow
             };
 
             db.Messages.Add(newMessage);
