@@ -57,5 +57,17 @@ namespace ChatApp_Web.API.Controllers
             }
             return NotFound("Không tìm thấy nhóm nào.");
         }
+
+        // Lấy thông tin nhóm (Tên nhóm và số thành viên)
+        [HttpGet("info/{groupId}")]
+        public async Task<IActionResult> GetGroupInfoAsync(Guid groupId)
+        {
+            var groupInfo = await _groupMemberService.GetGroupMemberInfoAsync(groupId);
+            if (groupInfo != null)
+            {
+                return Ok(groupInfo);
+            }
+            return NotFound("Không tìm thấy thông tin nhóm.");
+        }
     }
 }

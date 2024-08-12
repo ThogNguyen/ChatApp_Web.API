@@ -62,6 +62,20 @@ namespace ChatApp_Web.API.Repositories.Services
             };
         }
 
+        public async Task<GroupMemberInfo> GetGroupMemberInfoAsync(Guid groupId)
+        {
+            var group = await db.Groups
+                .Where(g => g.GroupId == groupId)
+                .Select(g => new GroupMemberInfo
+                {
+                    GroupName = g.GroupName,
+                    MemberCount = db.GroupMembers.Count(gm => gm.Group_Id == groupId)
+                })
+                .FirstOrDefaultAsync();
+
+            return group;
+        }
+
         public async Task<List<GroupMemberForView>> GetMembersAsync(Guid groupId)
         {
             var members = await db.GroupMembers
